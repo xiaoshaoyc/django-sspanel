@@ -166,7 +166,7 @@ def ChangeSsObfs(request):
             'status': 'success',
         }
         methods = [m[0] for m in METHOD_CHOICES]
-        protocols = [p[0] for p in PROTOCOL_CHOICES]
+        protocols = [p[0] for p in PROTOCOL_CHOICES]    # TODO:难道不应该用[1]吗？
         obfss = [o[0] for o in OBFS_CHOICES]
         context = {
             'registerinfo': registerinfo,
