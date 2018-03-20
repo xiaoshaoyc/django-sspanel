@@ -13,6 +13,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from shadowsocks.tools import get_short_random_string, traffic_format
 
+from shadowsocks.models import User
 METHOD_CHOICES = (
     ('aes-256-cfb', 'aes-256-cfb'),
     ('aes-128-ctr', 'aes-128-ctr'),
@@ -372,6 +373,9 @@ class TrafficLog(models.Model):
 
 class Node(models.Model):
     '''线路节点'''
+    # 节点提供者
+    provider = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, default=User.objects.all()[0])
+
     @classmethod
     def get_sub_code(cls, user):
         '''获取该用户的所有节点链接'''
@@ -382,7 +386,7 @@ class Node(models.Model):
             sub_code = sub_code + node.get_ssr_link(ss_user) + "\n"
         return sub_code
 
-    node_id = models.IntegerField('节点id', unique=True,)
+    # node_id = models.IntegerField('节点id', unique=True,)
 
     country = models.CharField(
         '国家', default='CN', max_length=2, choices=COUNTRIES_CHOICES)
@@ -396,9 +400,9 @@ class Node(models.Model):
         max_length=32, choices=METHOD_CHOICES,)
 
     custom_method = models.SmallIntegerField(
-        '自定义加密', choices=((0, "关闭"), (1, "启用")), default=0,)
+        '连入方式', choices=((0, "单端口"), (1, "服务器专用客户端")), default=0,)
 
-    traffic_rate = models.FloatField('流量比例', default=1.0)
+    traffic_rate = models.FloatField('流量比例', default=1.0, blank=True)
 
     protocol = models.CharField(
         '协议', default=settings.DEFAULT_PROTOCOL,
@@ -416,6 +420,7 @@ class Node(models.Model):
     level = models.PositiveIntegerField(
         '节点等级',
         default=0,
+        blank=True,
         validators=[
             MaxValueValidator(9),
             MinValueValidator(0),
@@ -431,8 +436,8 @@ class Node(models.Model):
         default='显示',
     )
 
-    group = models.CharField(
-        '分组名', max_length=32, default='谜之屋')
+    # group = models.CharField(
+    #     '分组名', max_length=32, default='默认分组')
 
     total_traffic = models.BigIntegerField(
         '总流量',

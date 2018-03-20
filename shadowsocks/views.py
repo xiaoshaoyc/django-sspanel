@@ -21,6 +21,8 @@ from .models import (InviteCode, User, Donate, Shop, MoneyCode,
                      PurchaseHistory, PayRequest,  Announcement, Ticket,
                      RebateRecord)
 
+from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def index(request):
     '''跳转到首页'''
@@ -617,102 +619,6 @@ def backend_node_info(request):
     return render(request, 'backend/nodeinfo.html', context=context)
 
 
-@permission_required('shadowsocks')
-def node_delete(request, node_id):
-    '''删除节点'''
-    node = Node.objects.filter(node_id=node_id)
-    node.delete()
-    nodes = Node.objects.all()
-    registerinfo = {
-        'title': '删除节点',
-        'subtitle': '成功啦',
-                    'status': 'success', }
-    context = {
-        'nodes': nodes,
-        'registerinfo': registerinfo
-    }
-    return render(request, 'backend/nodeinfo.html', context=context)
-
-
-@permission_required('shadowsocks')
-def node_edit(request, node_id):
-    '''编辑节点'''
-    node = Node.objects.get(node_id=node_id)
-    nodes = Node.objects.all()
-    # 当为post请求时，修改数据
-    if request.method == "POST":
-        form = NodeForm(request.POST, instance=node)
-        if form.is_valid():
-            form.save()
-            node.total_traffic = reverse_traffic(
-                form.cleaned_data['human_total_traffic'])
-            node.save()
-            registerinfo = {
-                'title': '修改成功',
-                'subtitle': '数据更新成功',
-                'status': 'success', }
-            context = {
-                'nodes': nodes,
-                'registerinfo': registerinfo,
-            }
-            return render(request, 'backend/nodeinfo.html', context=context)
-        else:
-            registerinfo = {
-                'title': '错误',
-                'subtitle': '数据填写错误',
-                'status': 'error', }
-
-            context = {
-                'form': form,
-                'registerinfo': registerinfo,
-                'node': node,
-            }
-            return render(request, 'backend/nodeedit.html', context=context)
-    # 当请求不是post时，渲染form
-    else:
-        form = NodeForm(instance=node)
-        context = {
-            'form': form,
-            'node': node,
-        }
-        return render(request, 'backend/nodeedit.html', context=context)
-
-
-@permission_required('shadowsocks')
-def node_create(request):
-    '''创建节点'''
-    if request.method == "POST":
-        form = NodeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            nodes = Node.objects.all()
-            registerinfo = {
-                'title': '添加成功',
-                'subtitle': '数据更新成功！',
-                'status': 'success', }
-            context = {
-                'nodes': nodes,
-                'registerinfo': registerinfo,
-            }
-            return render(request, 'backend/nodeinfo.html', context=context)
-        else:
-            registerinfo = {
-                'title': '错误',
-                'subtitle': '数据填写错误',
-                'status': 'error', }
-
-            context = {
-                'form': form,
-                'registerinfo': registerinfo,
-            }
-            return render(request, 'backend/nodecreate.html', context=context)
-
-    else:
-        form = NodeForm()
-        return render(request,
-                      'backend/nodecreate.html', context={'form': form, })
-
-
 class Page_List_View(object):
     '''
     拥有翻页功能的通用类
@@ -1197,3 +1103,135 @@ def backend_alive_user(request):
     context = Page_List_View(request, obj_list, page_num).get_page_context()
 
     return render(request, 'backend/aliveuser.html', context=context)
+
+
+class own_server(generic.View, LoginRequiredMixin):
+    def get(self, request):
+        server = request.user.node.objects
+        context = {
+            'server': server
+        }
+        return render(request, 'new/Ownnodeinfo.html', context=context)
+
+class add_own_server(generic.View, LoginRequiredMixin):
+    #  客户可以贡献自己的服务器
+    def get(self, request):
+        return self.node_create(request)
+
+    def post(self, request):
+        return self.node_create(request)
+
+    @classmethod
+    def node_create(self, request):
+        '''创建节点'''
+        if request.method == "POST":
+            request.POST['provider'] = request.user  # TODO: 要观察一下是否正确
+            form = NodeForm(request.POST)
+            if form.is_valid():
+                form.save()
+                nodes = Node.objects.all()
+                registerinfo = {
+                    'title': '添加成功',
+                    'subtitle': '数据更新成功！',
+                    'status': 'success', }
+                context = {
+                    'nodes': nodes,
+                    'registerinfo': registerinfo,
+                }
+                return render(request, 'new/Ownnodeinfo.html', context=context)
+            else:
+                registerinfo = {
+                    'title': '错误',
+                    'subtitle': '数据填写错误',
+                    'status': 'error', }
+
+                context = {
+                    'form': form,
+                    'registerinfo': registerinfo,
+                }
+                return render(request, 'new/Ownnodecreate.html', context=context)
+
+        else:
+            form = NodeForm()
+            return render(request,
+                          'new/Ownnodecreate.html', context={'form': form, })
+
+
+class edit_own_server(generic.View, LoginRequiredMixin):
+    # 用户编辑自行上传的服务器资料
+    def get(self, request, node_id):
+        return self.node_edit(request, node_id)
+
+    def post(self, request, node_id):
+        return self.node_edit(request, node_id)
+
+    def node_edit(self, request, node_id):
+        '''编辑节点'''
+        node = Node.objects.get(node_id=node_id)
+        # 判断正在编辑的节点是否为用户所提供
+        if node.provider.username != request.user.username:
+            return HttpResponse("<h1>您无权编辑此节点</h1>")
+
+        nodes = Node.objects.all()
+        # 当为post请求时，修改数据
+        if request.method == "POST":
+            form = NodeForm(request.POST, instance=node)
+            if form.is_valid():
+                form.save()
+                node.total_traffic = reverse_traffic(
+                    form.cleaned_data['human_total_traffic'])
+                node.save()
+                registerinfo = {
+                    'title': '修改成功',
+                    'subtitle': '数据更新成功',
+                    'status': 'success', }
+                context = {
+                    'nodes': nodes,
+                    'registerinfo': registerinfo,
+                }
+                return render(request, 'new/Ownnodeinfo.html', context=context)
+            else:
+                registerinfo = {
+                    'title': '错误',
+                    'subtitle': '数据填写错误',
+                    'status': 'error', }
+
+                context = {
+                    'form': form,
+                    'registerinfo': registerinfo,
+                    'node': node,
+                }
+                return render(request, 'new/Ownnodeedit.html', context=context)
+        # 当请求不是post时，渲染form
+        else:
+            form = NodeForm(instance=node)
+            context = {
+                'form': form,
+                'node': node,
+            }
+            return render(request, 'new/Ownnodeedit.html', context=context)
+
+class delete_own_server(generic.View, LoginRequiredMixin):
+    def get(self, request, node_id):
+        return self.node_delete(request, node_id)
+
+    def node_delete(self, request, node_id):
+        '''删除节点'''
+        node = Node.objects.filter(node_id=node_id)
+
+        # 判断正在删除的节点是否为用户所提供
+        if node.provider.username != request.user.username:
+            return HttpResponse("<h1>您无权删除此节点</h1>")
+
+        node.delete()
+        nodes = Node.objects.all()
+        registerinfo = {
+            'title': '删除节点',
+            'subtitle': '成功啦',
+            'status': 'success', }
+        context = {
+            'nodes': nodes,
+            'registerinfo': registerinfo
+        }
+        return render(request, 'backend/nodeinfo.html', context=context)
+
