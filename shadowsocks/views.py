@@ -18,11 +18,12 @@ from .forms import RegisterForm, LoginForm, NodeForm, ShopForm, AnnoForm
 from ssserver.models import METHOD_CHOICES, PROTOCOL_CHOICES, OBFS_CHOICES
 from ssserver.models import SSUser, Node, NodeOnlineLog, AliveIp
 from .models import (InviteCode, User, Donate, Shop, MoneyCode,
-                     PurchaseHistory, PayRequest,  Announcement, Ticket,
+                     PurchaseHistory, PayRequest, Announcement, Ticket,
                      RebateRecord)
 
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 def index(request):
     '''跳转到首页'''
@@ -172,7 +173,7 @@ def Logout_view(request):
     registerinfo = {
         'title': '注销成功',
         'subtitle': '欢迎下次再来',
-                    'status': 'success',
+        'status': 'success',
     }
     context = {
         'registerinfo': registerinfo,
@@ -243,7 +244,7 @@ def get_ssr_qrcode(request, node_id):
     ss_user = request.user.ss_user
     user = request.user
     # 获取节点对象
-    node = Node.objects.get(node_id=node_id)
+    node = Node.objects.get(id=node_id)
     # 加入节点信息等级判断
     if user.level < node.level:
         return HttpResponse('哟小伙子，可以啊！但是投机取巧是不对的哦！')
@@ -265,7 +266,7 @@ def get_ss_qrcode(request, node_id):
     ss_user = request.user.ss_user
     user = request.user
     # 获取节点对象
-    node = Node.objects.get(node_id=node_id)
+    node = Node.objects.get(id=node_id)
     # 加入节点信息等级判断
     if user.level < node.level:
         return HttpResponse('哟小伙子，可以啊！但是投机取巧是不对的哦！')
@@ -322,7 +323,7 @@ def gen_face_pay_qrcode(request):
         # 生成支付宝申请记录
         PayRequest.objects.create(username=request.user,
                                   info_code=request.session['out_trade_no'],
-                                  amount=request.session['amount'],)
+                                  amount=request.session['amount'], )
         # 删除sessions信息
         del request.session['code_url']
         del request.session['amount']
@@ -350,7 +351,7 @@ def nodeinfo(request):
     # 循环遍历每一条线路的在线人数
     for node in nodes:
         # 生成SSR和SS的链接
-        obj = Node.objects.get(node_id=node['node_id'])
+        obj = Node.objects.get(id=node['id'])
         node['ssrlink'] = obj.get_ssr_link(ss_user)
         node['sslink'] = obj.get_ss_link(ss_user)
         node['country'] = obj.country.lower()
@@ -788,7 +789,6 @@ def backend_invite(request):
 
 @permission_required('shadowsocks')
 def gen_invite_code(request):
-
     Num = request.GET.get('num')
     type = request.GET.get('type')
     for i in range(int(Num)):
@@ -799,7 +799,7 @@ def gen_invite_code(request):
     registerinfo = {
         'title': '成功',
         'subtitle': '添加邀请码{}个'.format(Num),
-                    'status': 'success', }
+        'status': 'success', }
 
     context = {
         'registerinfo': registerinfo,
@@ -858,7 +858,7 @@ def good_delete(request, pk):
     registerinfo = {
         'title': '删除商品',
         'subtitle': '成功啦',
-                    'status': 'success', }
+        'status': 'success', }
 
     context = {
         'goods': goods,
@@ -976,7 +976,7 @@ def anno_delete(request, pk):
     registerinfo = {
         'title': '删除公告',
         'subtitle': '成功啦',
-                    'status': 'success', }
+        'status': 'success', }
     context = {
         'anno': anno,
         'registerinfo': registerinfo
@@ -1105,13 +1105,14 @@ def backend_alive_user(request):
     return render(request, 'backend/aliveuser.html', context=context)
 
 
-class own_server(generic.View, LoginRequiredMixin):
+class own_server(LoginRequiredMixin, generic.View):
     def get(self, request):
-        server = request.user.node.objects
+        nodes = request.user.node_set.all()
         context = {
-            'server': server
+            'nodes': nodes
         }
         return render(request, 'new/Ownnodeinfo.html', context=context)
+
 
 class add_own_server(generic.View, LoginRequiredMixin):
     #  客户可以贡献自己的服务器
@@ -1121,21 +1122,21 @@ class add_own_server(generic.View, LoginRequiredMixin):
     def post(self, request):
         return self.node_create(request)
 
-    @classmethod
     def node_create(self, request):
         '''创建节点'''
         if request.method == "POST":
-            request.POST['provider'] = request.user  # TODO: 要观察一下是否正确
+            # request.POST['provider'] = request.user  #  要观察一下是否正确，发现是错的
             form = NodeForm(request.POST)
             if form.is_valid():
-                form.save()
-                nodes = Node.objects.all()
+                node = form.save()
+                node.provider = request.user
+                node.save()
                 registerinfo = {
                     'title': '添加成功',
                     'subtitle': '数据更新成功！',
                     'status': 'success', }
                 context = {
-                    'nodes': nodes,
+                    'nodes': request.user.node_set.all(),
                     'registerinfo': registerinfo,
                 }
                 return render(request, 'new/Ownnodeinfo.html', context=context)
@@ -1157,22 +1158,57 @@ class add_own_server(generic.View, LoginRequiredMixin):
                           'new/Ownnodecreate.html', context={'form': form, })
 
 
+def node_create(request):
+    '''管理员创建节点'''
+    if request.method == "POST":
+        # request.POST['provider'] = request.user
+        form = NodeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            nodes = Node.objects.all()
+            registerinfo = {
+                'title': '添加成功',
+                'subtitle': '数据更新成功！',
+                'status': 'success', }
+            context = {
+                'nodes': nodes,
+                'registerinfo': registerinfo,
+            }
+            return render(request, 'backend/nodeinfo.html', context=context)
+        else:
+            registerinfo = {
+                'title': '错误',
+                'subtitle': '数据填写错误',
+                'status': 'error', }
+
+            context = {
+                'form': form,
+                'registerinfo': registerinfo,
+            }
+            return render(request, 'backend/nodecreate.html', context=context)
+
+    else:
+        form = NodeForm()
+        return render(request,
+                      'backend/nodecreate.html', context={'form': form, })
+
+
 class edit_own_server(generic.View, LoginRequiredMixin):
     # 用户编辑自行上传的服务器资料
-    def get(self, request, node_id):
-        return self.node_edit(request, node_id)
+    def get(self, request, id):
+        return self.node_edit(request, id)
 
-    def post(self, request, node_id):
-        return self.node_edit(request, node_id)
+    def post(self, request, id):
+        return self.node_edit(request, id)
 
-    def node_edit(self, request, node_id):
+    def node_edit(self, request, id):
         '''编辑节点'''
-        node = Node.objects.get(node_id=node_id)
+        node = Node.objects.get(id=id)
         # 判断正在编辑的节点是否为用户所提供
         if node.provider.username != request.user.username:
             return HttpResponse("<h1>您无权编辑此节点</h1>")
 
-        nodes = Node.objects.all()
+        # nodes = Node.objects.all()
         # 当为post请求时，修改数据
         if request.method == "POST":
             form = NodeForm(request.POST, instance=node)
@@ -1186,7 +1222,7 @@ class edit_own_server(generic.View, LoginRequiredMixin):
                     'subtitle': '数据更新成功',
                     'status': 'success', }
                 context = {
-                    'nodes': nodes,
+                    'nodes': request.user.node_set.all(),
                     'registerinfo': registerinfo,
                 }
                 return render(request, 'new/Ownnodeinfo.html', context=context)
@@ -1211,27 +1247,89 @@ class edit_own_server(generic.View, LoginRequiredMixin):
             }
             return render(request, 'new/Ownnodeedit.html', context=context)
 
-class delete_own_server(generic.View, LoginRequiredMixin):
-    def get(self, request, node_id):
-        return self.node_delete(request, node_id)
 
-    def node_delete(self, request, node_id):
+def node_edit(request, node_id):
+    '''管理员编辑节点'''
+    nodes = Node.objects.all()
+    node = nodes.get(id=node_id)
+    # 当为post请求时，修改数据
+    if request.method == "POST":
+        form = NodeForm(request.POST, instance=node)
+        if form.is_valid():
+            form.save()
+            node.total_traffic = reverse_traffic(
+                form.cleaned_data['human_total_traffic'])
+            node.save()
+            registerinfo = {
+                'title': '修改成功',
+                'subtitle': '数据更新成功',
+                'status': 'success', }
+            context = {
+                'nodes': nodes,
+                'registerinfo': registerinfo,
+            }
+            return render(request, 'backend/nodeinfo.html', context=context)
+        else:
+            registerinfo = {
+                'title': '错误',
+                'subtitle': '数据填写错误',
+                'status': 'error', }
+
+            context = {
+                'form': form,
+                'registerinfo': registerinfo,
+                'node': node,
+            }
+            return render(request, 'backend/nodeedit.html', context=context)
+    # 当请求不是post时，渲染form
+    else:
+        form = NodeForm(instance=node)
+        context = {
+            'form': form,
+            'node': node,
+        }
+        return render(request, 'backend/nodeedit.html', context=context)
+
+
+class delete_own_server(generic.View, LoginRequiredMixin):
+    def get(self, request, id):
+        return self.node_delete(request, id)
+
+    def node_delete(self, request, id):
         '''删除节点'''
-        node = Node.objects.filter(node_id=node_id)
+        node = Node.objects.get(id=id)
 
         # 判断正在删除的节点是否为用户所提供
         if node.provider.username != request.user.username:
             return HttpResponse("<h1>您无权删除此节点</h1>")
 
         node.delete()
-        nodes = Node.objects.all()
+        # nodes = Node.objects.all()
         registerinfo = {
             'title': '删除节点',
             'subtitle': '成功啦',
             'status': 'success', }
         context = {
-            'nodes': nodes,
+            'nodes': request.user.node_set.all(),
             'registerinfo': registerinfo
         }
-        return render(request, 'backend/nodeinfo.html', context=context)
+        return render(request, 'new/Ownnodeinfo.html', context=context)
+        # TODO: 返回的页面URL没有跳转，下次要做一下
 
+
+def node_delete(request, node_id):
+    '''管理员删除节点'''
+    node = Node.objects.filter(node_id=node_id)
+
+    # 判断正在删除的节点是否为用户所提供
+    node.delete()
+    nodes = Node.objects.all()
+    registerinfo = {
+        'title': '删除节点',
+        'subtitle': '成功啦',
+        'status': 'success', }
+    context = {
+        'nodes': nodes,
+        'registerinfo': registerinfo
+    }
+    return render(request, 'backend/nodeinfo.html', context=context)

@@ -17,24 +17,24 @@ class SSUserAdmin(admin.ModelAdmin):
 
 
 class TrafficLogAdmin(admin.ModelAdmin):
-    list_display = ['user_id', 'node_id', 'traffic', 'log_date', ]
+    list_display = ['id', 'node_id', 'traffic', 'log_date', ]  # TODO: node_id是用来排序的，不能删除（update：不知道能不能删除）
 
 
 class NodeAdmin(admin.ModelAdmin):
-    list_display = ['node_id', 'name', 'level',
+    list_display = ['id', 'name', 'level',
                     'human_used_traffic', 'human_total_traffic', 'show', ]
 
 
 class NodeOnlineAdmin(admin.ModelAdmin):
-    list_display = ['node_id', 'online_user']
+    list_display = ['id', 'online_user']
 
 
 class NodeInfoAdmin(admin.ModelAdmin):
-    list_display = ['node_id', 'load']
+    list_display = ['id', 'load']
 
 
 class AliveIpAdmin(admin.ModelAdmin):
-    list_display = ['node_id', 'user', 'ip', 'log_time']
+    list_display = ['id', 'user', 'ip', 'log_time']
 
 
 # Register your models here.

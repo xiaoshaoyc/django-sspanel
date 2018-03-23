@@ -7,9 +7,9 @@ app_name = "shadowsocks"
 urlpatterns = [
     # 新增部分
     path('mynode/', views.own_server.as_view(), name='mynode'),
-    path('mynode/add', views.delete_own_server.as_view(), name='addnode'),
-    path('mynode/edit/<int:node_id>', views.edit_own_server.as_view(), name='editnode'),
-    path('mynode/delete/<int:node_id>', views.delete_own_server.as_view(), name='deletenode'),
+    path('mynode/add', views.add_own_server.as_view(), name='add_mynode'),
+    path('mynode/edit/<int:id>', views.edit_own_server.as_view(), name='edit_mynode'),
+    path('mynode/delete/<int:id>', views.delete_own_server.as_view(), name='delete_mynode'),
 
     # 网站用户面板
     path('', views.index, name='index'),

@@ -84,9 +84,15 @@ def ChangeSsPass(request):
                 'subtitle': '请及时更换客户端密码！',
                 'status': 'success',
             }
+            methods = [m[0] for m in METHOD_CHOICES]
+            protocols = [p[0] for p in PROTOCOL_CHOICES]
+            obfss = [o[0] for o in OBFS_CHOICES]
             context = {
                 'registerinfo': registerinfo,
                 'ss_user': ss_user,
+                'methods': methods,
+                'protocols': protocols,
+                'obfss': obfss,
             }
             return render(request,
                           'sspanel/userinfoedit.html', context=context)
@@ -123,6 +129,8 @@ def ChangeSsMethod(request):
         }
         return render(request, 'sspanel/userinfoedit.html', context=context)
 
+
+# TODO: 奇怪的写法，应该有改进空间
 
 @login_required
 def ChangeSsProtocol(request):
@@ -166,7 +174,7 @@ def ChangeSsObfs(request):
             'status': 'success',
         }
         methods = [m[0] for m in METHOD_CHOICES]
-        protocols = [p[0] for p in PROTOCOL_CHOICES]    # TODO:难道不应该用[1]吗？
+        protocols = [p[0] for p in PROTOCOL_CHOICES]  # TODO:难道不应该用[1]吗？
         obfss = [o[0] for o in OBFS_CHOICES]
         context = {
             'registerinfo': registerinfo,
@@ -255,7 +263,7 @@ def clean_zombie_user(request):
     registerinfo = {
         'title': '删除僵尸用户',
         'subtitle': '成功删除{}个僵尸用户'.format(count),
-                    'status': 'success', }
+        'status': 'success', }
     context = {
         'registerinfo': registerinfo
     }

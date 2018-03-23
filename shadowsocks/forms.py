@@ -85,7 +85,7 @@ class NodeForm(ModelForm):
     class Meta:
         model = Node
         fields = '__all__'
-        exclude = ['total_traffic', 'used_traffic', 'human_used_traffic', 'provider']
+        exclude = ['total_traffic', 'used_traffic', 'human_used_traffic', 'provider'] # provider
 
 
 class ShopForm(ModelForm):

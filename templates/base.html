@@ -62,14 +62,15 @@
                     <a class="navbar-item" href="{% url 'shadowsocks:nodeinfo' %}">节点信息</a>
                     <a class="navbar-item" href="{% url 'shadowsocks:userinfo_edit' %}">节点编辑</a>
                     <a class="navbar-item" href="{% url 'shadowsocks:trafficlog' %}">流量记录</a>
-                    <a class="navbar-item is-active">交易相关</a>
+                    <a class="navbar-item is-active">其它事项</a>
                     <a class="navbar-item" href="{% url 'shadowsocks:donate' %}">捐赠充值</a>
-                    <a class="navbar-item" href="{% url 'shadowsocks:chargecenter' %}">充值界面</a>
-                    <a class="navbar-item" href="{% url 'shadowsocks:shop' %}">商品界面</a>
-                    <a class="navbar-item" href="{% url 'shadowsocks:purchaselog' %}">购买记录</a>
-                    <a class="navbar-item is-active">邀请相关</a>
+{#                    <a class="navbar-item" href="{% url 'shadowsocks:chargecenter' %}">充值界面</a>#}
+{#                    <a class="navbar-item" href="{% url 'shadowsocks:shop' %}">商品界面</a>#}
+{#                    <a class="navbar-item" href="{% url 'shadowsocks:purchaselog' %}">购买记录</a>#}
+{#                    <a class="navbar-item is-active">邀请相关</a>#}
                     <a class="navbar-item" href="{% url 'shadowsocks:affiliate' %}">邀请管理</a>
-                    <a class="navbar-item" href="{% url 'shadowsocks:rebate' %}">返利记录</a>
+                    <a class="navbar-item" href="{% url 'shadowsocks:mynode' %}">分享节点</a>
+{#                    <a class="navbar-item" href="{% url 'shadowsocks:rebate' %}">返利记录</a>#}
                     {% if perms.shadowsocks %}
                     <a class="navbar-item is-active">管理面板</a>
                     <a class="navbar-item" href="/admin">数据后台</a>
@@ -130,32 +131,33 @@
                             </li>
                         </ul>
                         <p class="menu-label">
-                            交易相关
+                            其它事项
                         </p>
                         <ul class="menu-list">
                             <li>
                                 <a href="{% url 'shadowsocks:donate' %}">捐赠付费</a>
                             </li>
                             <li>
-                                <a href="{% url 'shadowsocks:chargecenter' %}">充值界面</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'shadowsocks:shop' %}">商品界面</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'shadowsocks:purchaselog' %}">购买记录</a>
-                            </li>
-                        </ul>
-                        <p class="menu-label">
-                            邀请相关
-                        </p>
-                        <ul class="menu-list">
+{#                                <a href="{% url 'shadowsocks:chargecenter' %}">充值界面</a>#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <a href="{% url 'shadowsocks:shop' %}">商品界面</a>#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <a href="{% url 'shadowsocks:purchaselog' %}">购买记录</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                        <p class="menu-label">#}
+{#                            邀请相关#}
+{#                        </p>#}
+{#                        <ul class="menu-list">#}
                             <li>
                                 <a href="{% url 'shadowsocks:affiliate' %}">邀请管理</a>
                             </li>
-                            <li>
-                                <a href="{% url 'shadowsocks:rebate' %}">返利记录</a>
-                            </li>
+{#                            <li>#}
+{#                                <a href="{% url 'shadowsocks:rebate' %}">返利记录</a>#}
+{#                            </li>#}
+                            <li><a href="{% url 'shadowsocks:mynode' %}">分享节点</a></li>
                         </ul>
                         {% if perms.shadowsocks %}
                         <p class="menu-label">

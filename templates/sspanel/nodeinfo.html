@@ -17,7 +17,7 @@
 <div class="column is-12">
     <div class="box nodelist" id="id-nodelist">
         {% for list in nodelists %}
-        <div class="node-cell" data-id="{{ list.node_id }}">
+        <div class="node-cell" data-id="{{ list.id }}">
             <div class="card">
                 <div class="card-header">
                     {% if list.online == True %}
@@ -32,22 +32,22 @@
                             <i class="flag-icon flag-icon-{{ list.country }}"></i>
                         </span>
                     </p>
-                    <a id="id-icon-{{ list.node_id }}" class="card-header-icon" onclick="$(`#id-card-body-${ {{ list.node_id }} }`).toggle('swing')">
+                    <a id="id-icon-{{ list.id }}" class="card-header-icon" onclick="$(`#id-card-body-${ {{ list.id }} }`).toggle('swing')">
                         <span class="icon">
                             <i class="fa fa-ellipsis-v"></i>
                         </span>
                     </a>
                 </div>
                 {% if user.level >= list.level %}
-                <div id="id-card-body-{{ list.node_id }}" hidden="true">
+                <div id="id-card-body-{{ list.id }}" hidden="true">
                     <div class="card-content">
                         <div class="content">
                             {{ list.info }}
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a class="card-footer-item modal-button" id="id-button-qrcode-{{ list.node_id }}" data-target="modal-qrcode-{{ list.name }}">二维码</a>
-                        <a class="card-footer-item modal-button" data-target="modal-config-{{ list.node_id }}">配置</a>
+                        <a class="card-footer-item modal-button" id="id-button-qrcode-{{ list.id }}" data-target="modal-qrcode-{{ list.name }}">二维码</a>
+                        <a class="card-footer-item modal-button" data-target="modal-config-{{ list.id }}">配置</a>
                         <a class="card-footer-item">
                             <span class="icon">
                                 <i class="fa fa-user-o">「{{ list.count }}」</i>
@@ -55,7 +55,7 @@
                         </a>
                     </div>
                     <!--配置部分 -->
-                    <div class="modal nodeinfo" id="modal-config-{{ list.node_id }}">
+                    <div class="modal nodeinfo" id="modal-config-{{ list.id }}">
                         <div class="modal-background"></div>
                         <div class="modal-card">
                             <header class="modal-card-head">
@@ -147,19 +147,19 @@
                                 <div class="box">
                                     <!-- SSR配置 ... -->
                                     <p class="subtitle">SSR版本(推荐使用)：</p>
-                                    <img src="" id="id-ssr-{{ list.node_id }}" width="256" height="256">
+                                    <img src="" id="id-ssr-{{ list.id }}" width="256" height="256">
                                 </div>
                                 <div class="box">
                                     <!-- SS配置 ... -->
                                     <p class="subtitle">SS原版：</p>
-                                    <img src="" id="id-ss-{{ list.node_id }}" width="256" height="256">
+                                    <img src="" id="id-ss-{{ list.id }}" width="256" height="256">
                                 </div>
                             </section>
                         </div>
                     </div>
                 </div>
                 {% else %}
-                <div id="id-card-body-{{ list.node_id }}" hidden="true">
+                <div id="id-card-body-{{ list.id }}" hidden="true">
                     <div class="card-content">
                         <article class="message is-danger">
                             <div class="message-body">

@@ -11,15 +11,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import platform
-# 导入自定义设定文件
-if platform.node() == 'Ehco-iMac.lan':
-    from .simple_setting_local import *
-else:
-    from.simple_setting_product import *
+from .simple_setting_local import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -28,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '#d$3kz$u_qb26y+idj#kf7$)wcl)j%6vfjvd@poqy(vvxj#8o9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
+# DEBUG = True
 
-#ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -77,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django-sspanel.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 # 详见simple_setting
@@ -107,7 +101,6 @@ AUTHENTICATION_BACKENDS = (
     'shadowsocks.backends.EmailBackend',
 )
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -125,7 +118,6 @@ USE_TZ = False
 SESSION_COOKIE_AGE = 60 * 60  # 60分钟
 SESSION_SAVE_EVERY_REQUEST = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -134,7 +126,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
-
 
 # 用户模型设置：
 AUTH_USER_MODEL = 'shadowsocks.User'
@@ -155,3 +146,5 @@ CRONJOBS = [
      '>>' + BASE_DIR + '/logs/node_reset.log'),  # 每月第一天凌晨4点重置节点流量，日志写入logs
 
 ]
+
+LOGIN_URL = '/login/'

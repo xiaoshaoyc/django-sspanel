@@ -191,7 +191,7 @@ class SSUser(models.Model):
         '最后签到时间',
         null=True,
         # 默认设置为时间戳开始的那天
-        default=datetime.datetime.fromtimestamp(0),
+        default=datetime.datetime.fromtimestamp(86400), # 在3.6版本后不能设置为0，只能设置为86400以上的数字
         editable=False,
     )
 
@@ -211,7 +211,7 @@ class SSUser(models.Model):
     )
     last_use_time = models.IntegerField(
         '最后使用时间',
-        default=0,
+        default=86400,
         editable=False,
         help_text='时间戳',
         db_column='t'
@@ -373,9 +373,9 @@ class TrafficLog(models.Model):
 
 class Node(models.Model):
     '''线路节点'''
+    # TODO: 这边原来由个叫node_id的东西被删了，在许多文件里都有出现，要作出大量修改
     # 节点提供者
-    provider = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, default=User.objects.all()[0])
-
+    provider = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     @classmethod
     def get_sub_code(cls, user):
         '''获取该用户的所有节点链接'''
@@ -393,7 +393,7 @@ class Node(models.Model):
 
     name = models.CharField('名字', max_length=32,)
 
-    server = models.CharField('服务器IP', max_length=128,)
+    server = models.CharField('服务器IP', max_length=128)
 
     method = models.CharField(
         '加密类型', default=settings.DEFAULT_METHOD,
@@ -465,7 +465,7 @@ class Node(models.Model):
         ssr_remarks = base64.urlsafe_b64encode(
             bytes(self.name, 'utf8')).decode('ascii')
         ssr_group = base64.urlsafe_b64encode(
-            bytes(self.group, 'utf8')).decode('ascii')
+            bytes(settings.TITLE, 'utf8')).decode('ascii')
         if self.custom_method == 1:
             ssr_code = '{}:{}:{}:{}:{}:{}/?remarks={}&group={}'.format(
                 self.server, ss_user.port, ss_user.protocol, ss_user.method,
@@ -498,7 +498,7 @@ class Node(models.Model):
         super(Node, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['node_id']
+        ordering = ['id']
         verbose_name_plural = '节点'
         db_table = 'ss_node'
 
@@ -506,7 +506,7 @@ class Node(models.Model):
 class NodeInfoLog(models.Model):
     '''节点负载记录'''
 
-    node_id = models.IntegerField('节点id', blank=False, null=False)
+    node_id = models.IntegerField('节点id', blank=False, null=False)  # TODO:这边也有一个node_id不知道要不要删除
 
     uptime = models.FloatField('更新时间', blank=False, null=False)
 
@@ -578,7 +578,7 @@ class AliveIp(models.Model):
                 ret.append(item)
         return ret
 
-    node_id = models.IntegerField('节点id', blank=False, null=False)
+    # node_id = models.IntegerField('节点id', blank=False, null=False)
 
     ip = models.CharField('设备ip', max_length=128,)
 

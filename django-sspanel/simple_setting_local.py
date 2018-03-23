@@ -1,5 +1,5 @@
 import base64
-
+import os
 # DEBUG设置
 DEBUG = True
 
@@ -8,12 +8,8 @@ ALLOWED_HOSTS = ['*']
 # mysql 设置
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sspanel',
-        'USER': 'root',
-        'PASSWORD': 'xx',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'db.sqlite3')
     }
 }
 
@@ -22,7 +18,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # 是否开启邮件功能
 USE_SMTP = False
-
 
 # SS面板设置：
 MB = 1024 * 1024
@@ -48,7 +43,7 @@ ALIPAY_TRADE_INFO = '谜之屋的{}元充值码'
 # 91PAY 、ALIPAY只能开启一项
 # 需要授权请联系：
 # https://t.me/gh012363  或者QQ群538609570
-USE_91PAY = True
+USE_91PAY = False
 # 自己的支付宝账号
 ALIPAY_NUM = 'xx'
 
@@ -68,7 +63,7 @@ INVITEINFO = '邀请码实时更新，如果用完了请关注公众号findyouro
 HOST = 'http://127.0.0.1:8000/'
 
 # 管理员账号
-USERNAME = 'ehco'
+USERNAME = 'xiaoshaoyc'
 # 管理员ss端口
 PORT = 2345
 # 管理员私有token，用于后端接口调用
