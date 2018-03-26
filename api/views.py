@@ -451,7 +451,7 @@ def node_api(request, node_id):
     '''
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
-        node = Node.objects.filter(node_id=node_id)
+        node = Node.objects.filter(id=node_id)
         if len(node) > 0 and node[0].used_traffic < node[0].total_traffic:
             data = (node[0].traffic_rate,)
         else:
@@ -472,7 +472,7 @@ def node_online_api(request):
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
         data = json.loads(request.body)
-        node = Node.objects.filter(node_id=data['node_id'])
+        node = Node.objects.filter(id=data['node_id'])
         if len(node) > 0:
             NodeOnlineLog.objects.create(
                 node_id=data['node_id'],
@@ -492,7 +492,7 @@ def user_api(request, node_id):
     '''
     token = request.GET.get('token', '')
     if token == settings.TOKEN:
-        node = Node.objects.filter(node_id=node_id)
+        node = Node.objects.filter(id=node_id)
         if len(node) > 0:
             data = []
             level = node[0].level
@@ -547,7 +547,7 @@ def traffic_api(request):
                 upload_traffic=rec['u'], log_time=log_time))
             node_total_traffic = node_total_traffic + rec['u']+rec['d']
         # 节点流量记录
-        node = Node.objects.get(node_id=node_id)
+        node = Node.objects.get(id=node_id)
         node.used_traffic += node_total_traffic
         node.save()
         # 个人流量记录

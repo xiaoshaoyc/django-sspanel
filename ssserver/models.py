@@ -567,10 +567,10 @@ class AliveIp(models.Model):
         返回节点在线的最新记录
         '''
         now = timezone.now()
-        last_now = now - datetime.timedelta(minutes=2)
+        last_now = now - datetime.timedelta(minutes=5)
         ret = []
         ip_pool = []
-        _ = cls.objects.filter(node_id=node_id, log_time__range=[
+        _ = cls.objects.filter(id=node_id, log_time__range=[
             str(last_now), str(now)])
         for item in _:
             if item.ip not in ip_pool:

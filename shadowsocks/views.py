@@ -1098,7 +1098,7 @@ def backend_ticketedit(request, pk):
 def backend_alive_user(request):
     obj_list = []
     for node in Node.objects.all():
-        obj_list.extend(AliveIp.recent_alive(node.node_id))
+        obj_list.extend(AliveIp.recent_alive(node.id))
     page_num = 15
     context = Page_List_View(request, obj_list, page_num).get_page_context()
 
@@ -1319,7 +1319,7 @@ class delete_own_server(generic.View, LoginRequiredMixin):
 
 def node_delete(request, node_id):
     '''管理员删除节点'''
-    node = Node.objects.filter(node_id=node_id)
+    node = Node.objects.filter(id=node_id)
 
     # 判断正在删除的节点是否为用户所提供
     node.delete()

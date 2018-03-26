@@ -65,7 +65,7 @@ HOST = 'http://127.0.0.1:8000/'
 # 管理员账号
 USERNAME = 'xiaoshaoyc'
 # 管理员ss端口
-PORT = 2345
+PORT = 1025
 # 管理员私有token，用于后端接口调用
 TOKEN = base64.b64encode(
     bytes('{}+{}'.format(USERNAME, PORT), 'utf8')).decode()

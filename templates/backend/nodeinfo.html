@@ -33,10 +33,10 @@
             <tr>
                 <td>
                     <p class="control">
-                        <a class="button is-info" href="{% url 'shadowsocks:node_edit' node.node_id  %}">编辑</a>
+                        <a class="button is-info" href="{% url 'shadowsocks:node_edit' node.id  %}">编辑</a>
                     </p>
                     <p class="control">
-                        <a class="button is-danger modal-button" data-target="modal-{{ node.node_id }}">删除</a>
+                        <a class="button is-danger modal-button" data-target="modal-{{ node.id }}">删除</a>
                     </p>
                 </td>
                 <td>#{{ node.pk }}</td>
@@ -48,7 +48,7 @@
                 <td>{{ node.human_used_traffic }}</td>
                 <td>{{ node.human_total_traffic }}</td>                
             </tr>
-            <div class="modal node_delete" id="modal-{{ node.node_id }}">
+            <div class="modal node_delete" id="modal-{{ node.id }}">
                 <div class="modal-background"></div>
                 <div class="modal-card">
                     <header class="modal-card-head">
@@ -59,7 +59,7 @@
                         <p class="subtitle">确定要删除:
                             <code>{{ node.name }}</code>?</p>
                         <p align="center">
-                            <a class="button is-danger is-outlined" href="{% url 'shadowsocks:node_delete' node.node_id %}">确定删除</a>
+                            <a class="button is-danger is-outlined" href="{% url 'shadowsocks:node_delete' node.id %}">确定删除</a>
                         </p>
                     </section>
                 </div>
