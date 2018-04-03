@@ -27,6 +27,17 @@
                     <p class="card-header-title">
                         <span class="tag is-danger">掉线</span>&nbsp&nbsp{{ list.name }}</p>
                     {% endif %}
+
+                    <p class="card-header-title">
+                        <span>提供者：
+                            {% if list.provider == NULL %}
+                                系统提供
+                            {% else %}
+                                {{ list.provider.username }}
+                            {% endif %}
+                        </span>
+                    </p>
+
                     <p class="card-header-icon">地区：
                         <span class="icon">
                             <i class="flag-icon flag-icon-{{ list.country }}"></i>

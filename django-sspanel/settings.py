@@ -96,7 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # 自定义用户验证
-AUTHENTICATION_BACKENDS = (
+AUTHENTIATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'shadowsocks.backends.EmailBackend',
 )

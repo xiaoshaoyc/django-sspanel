@@ -352,6 +352,7 @@ def nodeinfo(request):
     for node in nodes:
         # 生成SSR和SS的链接
         obj = Node.objects.get(id=node['id'])
+        node['provider'] = obj.provider
         node['ssrlink'] = obj.get_ssr_link(ss_user)
         node['sslink'] = obj.get_ss_link(ss_user)
         node['country'] = obj.country.lower()
@@ -1333,3 +1334,5 @@ def node_delete(request, node_id):
         'registerinfo': registerinfo
     }
     return render(request, 'backend/nodeinfo.html', context=context)
+
+# TODO:答题获得邀请码功能

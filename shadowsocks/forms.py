@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
 
-from .models import Announcement, Shop, User
+from .models import Announcement, Shop, User, InviteCode
 from ssserver.models import Node
 
 
@@ -21,7 +21,7 @@ class RegisterForm(UserCreationForm):
                                  attrs={'class': 'input is-warning'}))
     invitecode = forms.CharField(label='邀请码', help_text='邀请码必须填写',
                                  widget=forms.TextInput(
-                                     attrs={'class': 'input is-success'}))
+                                     attrs={'class': 'input is-success', 'value': InviteCode.objects.filter(isused=False,type=1)[0]}))
     password1 = forms.CharField(label='密码', help_text='''你的密码不能与其他个人信息太相似。
                                                         你的密码必须包含至少 8 个字符。
                                                         你的密码不能是大家都爱用的常见密码

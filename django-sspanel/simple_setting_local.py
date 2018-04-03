@@ -48,8 +48,8 @@ USE_91PAY = False
 ALIPAY_NUM = 'xx'
 
 # 网站title
-TITLE = '谜之屋'
-SUBTITLE = '秘密的小屋111'
+TITLE = 'Aperture Science'
+SUBTITLE = '光环科技'
 
 # 用户邀请返利比例
 INVITE_PERCENT = 0.2
@@ -57,7 +57,7 @@ INVITE_PERCENT = 0.2
 INVITE_NUM = 5
 
 # 网站邀请界面提示语
-INVITEINFO = '邀请码实时更新，如果用完了请关注公众号findyourownway获取'
+INVITEINFO = '邀请码实时更新，如果用完了就等一会'
 
 # 网站域名设置（请正确填写，不然订阅功能会失效：
 HOST = 'http://127.0.0.1:8000/'
