@@ -353,6 +353,8 @@ def nodeinfo(request):
         # 生成SSR和SS的链接
         obj = Node.objects.get(id=node['id'])
         node['provider'] = obj.provider
+        node['custom_method'] = obj.custom_method
+
         node['ssrlink'] = obj.get_ssr_link(ss_user)
         node['sslink'] = obj.get_ss_link(ss_user)
         node['country'] = obj.country.lower()

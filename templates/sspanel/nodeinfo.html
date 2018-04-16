@@ -20,7 +20,10 @@
         <div class="node-cell" data-id="{{ list.id }}">
             <div class="card">
                 <div class="card-header">
-                    {% if list.online == True %}
+                    {% if list.custom_method == 0 %}
+                    <p class="card-header-title">
+                        <span class="tag is-success">单端口</span>&nbsp&nbsp{{ list.name }}</p>
+                    {% elif list.online == True %}
                     <p class="card-header-title">
                         <span class="tag is-success">在线</span>&nbsp&nbsp{{ list.name }}</p>
                     {% else %}
@@ -53,7 +56,11 @@
                 <div id="id-card-body-{{ list.id }}" hidden="true">
                     <div class="card-content">
                         <div class="content">
+                            {% if list.info == None %}
+                                无可奉告！
+                            {% else %}
                             {{ list.info }}
+                            {% endif %}
                         </div>
                     </div>
                     <div class="card-footer">
