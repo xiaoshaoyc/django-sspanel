@@ -4,7 +4,7 @@ DEBUG = False
 
 # 域名设置
 ALLOWED_HOSTS = [
-    'your.domain.com'
+    'freedom.xiaoshao.me'
 ]
 
 # mysql 设置
@@ -58,7 +58,7 @@ MAX_CHECKIN_TRAFFIC = 200 * MB
 # 是否启用支付宝系统
 USE_ALIPAY = False
 # 支付订单提示信息 修改请保留 {} 用于动态生成金额
-ALIPAY_TRADE_INFO = '谜之屋的{}元充值码'
+ALIPAY_TRADE_INFO = '光环科技的{}元充值码'
 
 # 是否开启91pay 第三方接口
 # 91PAY 、ALIPAY只能开启一项
